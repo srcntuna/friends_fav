@@ -1,19 +1,59 @@
-import UserFavs from "./Components/UserFavs";
+import "../Styles/UserHome.css";
+import UserFeed from "./UserFeed";
+import React, { useState } from "react";
+import Axios from "axios";
+import { Link } from "react-router-dom";
 
-function UserPage() {
+function UserHome() {
+  const [postDetails, setPostDetails] = useState({
+    location: "",
+    menuItem: "",
+  });
+
+  //NOT WORKING NOW , WAITING FOR USERNAME AUTHENTICATION
+  const submitHandler = (e) => {
+    e.preventDefault();
+    console.log("SUBMITTING");
+    Axios.post("http://localhost:3001/api/favorites", { postDetails }).then(
+      (response) => {
+        console.log(response);
+      }
+    );
+  };
+
   return (
-    <div className="UserPage">
-      <nav></nav>
+    <div className="userPage">
       <div>
-        <div>
-          <h1>Hello User!</h1>
-          <label htmlFor="Location">What is your fav location?</label>
-          <input type="text" placeholder="write your fav location" />
-          <label htmlFor="MenuItem">What is your fav food/drink?</label>
-          <input type="text" placeholder="write your fav food/drink" />
-        </div>
-        <UserFavs />
+        <form onSubmit={submitHandler}>
+          <div className="formFavorite">
+            <label htmlFor="Location">What is your fav location?:</label>
+            <input
+              type="text"
+              id="favLocation"
+              name="location"
+              placeholder="Write your fav location"
+              onChange={(e) =>
+                setPostDetails({ ...postDetails, location: e.target.value })
+              }
+            />
+            <label htmlFor="MenuItem">What is your fav food/drink?:</label>
+            <input
+              type="text"
+              id="favMenuItem"
+              name="menuItem"
+              placeholder="Write your fav food/drink"
+              onChange={(e) =>
+                setPostDetails({ ...postDetails, menuItem: e.target.value })
+              }
+            />
+          </div>
+          <input type="submit" value="Add to Favorites" />
+        </form>
       </div>
+      <h2>Your and Your Friends Favs</h2>
+      <UserFeed />
     </div>
   );
 }
+
+export default UserHome;

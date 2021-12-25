@@ -1,7 +1,7 @@
 const db = require("../db/usersDb");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
+const { sign, verify } = require("jsonwebtoken");
 const appController = {};
 
 appController.getAllUsers = async (req, res, next) => {
@@ -54,7 +54,11 @@ appController.checkUserLogin = async (req, res, next) => {
           res.locals.error = { message: "Incorrect username or password" };
           return next();
         } else {
-          res.locals.users = data;
+          const accessToken = sign(
+            { username: data[0].username, id: data[0].id },
+            "roptesambir"
+          );
+          res.locals.token = accessToken;
           next();
         }
       });
@@ -63,6 +67,22 @@ appController.checkUserLogin = async (req, res, next) => {
       next();
     }
   });
+};
+
+appController.validateToken = (req, res, next) => {
+  const accessToken = req.header("accesstoken");
+
+  if (!accessToken) return res.json({ error: "User not logged in" });
+
+  try {
+    const validToken = verify(accessToken, "roptesambir");
+    req.user = validToken;
+    if (validToken) {
+      return next();
+    }
+  } catch (err) {
+    return res.json({ error: err });
+  }
 };
 
 module.exports = appController;

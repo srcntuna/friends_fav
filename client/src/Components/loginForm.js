@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Axios from "axios";
 
 function LoginForm() {
@@ -8,13 +8,23 @@ function LoginForm() {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const [loginStatus, setLoginStatus] = useState("");
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     Axios.post("/api/login", { loginDetails }).then((response) => {
-      setLoginStatus(response.data.message);
+      if (response.data.message) {
+        setLoginStatus(response.data.message);
+        setTimeout(() => {
+          setLoginStatus("");
+        }, 1000);
+      } else {
+        sessionStorage.setItem("accessToken", response.data);
+        navigate("/home");
+      }
     });
 
     // console.log(loginDetails);
