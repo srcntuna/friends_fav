@@ -2,13 +2,17 @@ import "../Styles/UserHome.css";
 import UserFeed from "./UserFeed";
 import React, { useState } from "react";
 import Axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function UserHome() {
   const [postDetails, setPostDetails] = useState({
     location: "",
     menuItem: "",
   });
+
+  const params = useParams();
+
+  console.log(params);
 
   //NOT WORKING NOW , WAITING FOR USERNAME AUTHENTICATION
   const submitHandler = (e) => {

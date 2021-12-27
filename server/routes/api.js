@@ -98,14 +98,15 @@ router.get("/comments/:id", async (req, res) => {
   });
 });
 
-router.post("/comments", async (req, res) => {
+router.post("/comments", appController.validateToken, async (req, res) => {
   const { commentId, comment } = req.body;
-  console.log(req.body);
-  const q = "INSERT INTO Comments (comment,idFavorites) VALUES(?,?)";
+  const q = "INSERT INTO Comments (username,comment,idFavorites) VALUES(?,?,?)";
 
-  await db.query(q, [comment, commentId], (err, result) => {
+  const { username } = res.locals.user;
+
+  await db.query(q, [username, comment, commentId], (err, result) => {
     if (err) console.log("ERROR in favoritesID from DB");
-    res.json(result);
+    res.json({ ...req.body, ...res.locals.user });
   });
 });
 

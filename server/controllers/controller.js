@@ -70,14 +70,14 @@ appController.checkUserLogin = async (req, res, next) => {
 };
 
 appController.validateToken = (req, res, next) => {
-  const accessToken = req.header("accesstoken");
+  const accessToken = req.header("accessToken");
 
   if (!accessToken) return res.json({ error: "User not logged in" });
 
   try {
     const validToken = verify(accessToken, "roptesambir");
-    req.user = validToken;
     if (validToken) {
+      res.locals.user = validToken;
       return next();
     }
   } catch (err) {

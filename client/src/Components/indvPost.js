@@ -16,22 +16,34 @@ function IndvPost() {
     });
 
     Axios.get(`http://localhost:3001/api/comments/${id}`).then((response) => {
+      console.log(response.data);
       setCommentList(response.data);
     });
   }, []);
 
   const addComment = (e) => {
-    Axios.post(`http://localhost:3001/api/comments/`, {
-      commentId: id,
-      comment: newComment,
-    }).then((response) => {
-      setCommentList([
-        ...commentList,
-        {
-          commentId: id,
-          comment: newComment,
-        },
-      ]);
+    Axios.post(
+      `http://localhost:3001/api/comments/`,
+      {
+        commentId: id,
+        comment: newComment,
+      },
+      {
+        headers: { accesstoken: localStorage.getItem("accessToken") },
+      }
+    ).then((response) => {
+      if (response.data.error) {
+        alert("YOU ARE NOT AUTHENTICATED!!!");
+      } else {
+        setCommentList([
+          ...commentList,
+          {
+            username: response.data.username,
+            commentId: id,
+            comment: newComment,
+          },
+        ]);
+      }
     });
 
     setNewComment("");
@@ -59,7 +71,11 @@ function IndvPost() {
           <button onClick={addComment}>Add Comment</button>
           <div className="listOfCommentsContainer">
             {commentList.map((comment, key) => {
-              return <div key={key}>{comment.comment}</div>;
+              return (
+                <div key={key}>
+                  {comment.username} - {comment.comment}
+                </div>
+              );
             })}
           </div>
         </div>

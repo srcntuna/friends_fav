@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Axios from "axios";
+import "../Styles/LoginForm.css";
 
 function LoginForm() {
   const [loginDetails, setLoginDetails] = useState({
     username: "",
     password: "",
   });
-
   const navigate = useNavigate();
 
   const [loginStatus, setLoginStatus] = useState("");
@@ -22,7 +22,7 @@ function LoginForm() {
           setLoginStatus("");
         }, 1000);
       } else {
-        sessionStorage.setItem("accessToken", response.data);
+        localStorage.setItem("accessToken", response.data);
         navigate("/home");
       }
     });
@@ -31,7 +31,7 @@ function LoginForm() {
   };
 
   return (
-    <div>
+    <div className="LoginForm-container">
       <form action="" className="LoginForm" onSubmit={submitHandler}>
         <div className="form-inner">
           <h2>Login</h2>
